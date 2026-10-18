@@ -1,0 +1,6 @@
+{
+  "$schema": "./schema/catalog.schema.json",
+  "version": 1,
+  "extensions": [],
+  "blocklist": []
+}

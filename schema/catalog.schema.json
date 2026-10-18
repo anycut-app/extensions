@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://anycut.app/schema/catalog.v1.schema.json",
+  "title": "AnyCut extension catalog",
+  "type": "object",
+  "required": ["version", "extensions", "blocklist"],
+  "properties": {
+    "version": { "const": 1 },
+    "extensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "repo", "version", "kind", "download", "sha256"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,39}\.[a-z0-9][a-z0-9-]{0,39}$", "description": "publisher.name, as in the extension's package.json" },
+          "repo": { "type": "string", "pattern": "^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$", "description": "owner/repo on GitHub" },
+          "version": { "type": "string", "description": "the exact version reviewed (semver)" },
+          "kind": { "enum": ["tool", "pack"], "description": "tool = UI and/or code; pack = content only (effects, fonts, looks…)" },
+          "download": { "type": "string", "format": "uri", "description": "the reviewed release zip (mirrored into this repo's releases on approval)" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "runsCode": { "type": "boolean" },
+          "permissions": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "blocklist": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "reason"], "properties": { "id": { "type": "string" }, "versions": { "type": "string", "description": "semver range; omit for every version" }, "reason": { "type": "string" } } }
+    }
+  }
+}

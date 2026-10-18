@@ -1,0 +1,19 @@
+name: Extension request
+description: Suggest an extension you'd like someone to build
+labels: ["request"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What should it do?
+      description: The job you want done in AnyCut, and how you'd use it.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: How do you do this today?
+  - type: input
+    id: examples
+    attributes:
+      label: Similar tools or links
