@@ -1,0 +1,89 @@
+name: Check
+
+# Every pull request that touches index.json: checksums, a diff against the previous version, permission
+# and code flags, a malware scan, then a comment, a label, and auto-merge for updates that ask for nothing new.
+#
+# pull_request_target gives the workflow a token that can comment and label on pull requests from forks.
+# That is safe here because nothing from the pull request is ever run: the scripts come from the base
+# branch, and the pull request only contributes its index.json, which is read as data. The zips it points
+# at are downloaded, hashed, unpacked and read, never executed.
+
+on:
+  pull_request_target:
+    paths: ['index.json']
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the base branch (its scripts, not the pull request's)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Read the pull request's index.json
+        run: |
+          git fetch --no-tags origin "pull/${{ github.event.pull_request.number }}/head:pr"
+          git show pr:index.json > head-index.json
+
+      - name: Check the new and changed entries
+        id: check
+        continue-on-error: true
+        run: node scripts/check-pr.mjs --base HEAD --head head-index.json --work work --report report.md
+
+      - name: Malware scan (ClamAV)
+        id: scan
+        if: hashFiles('work/**') != ''
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq clamav > /dev/null
+          sudo systemctl stop clamav-freshclam 2>/dev/null || true
+          sudo freshclam --quiet || true
+          if clamscan -r --infected --no-summary work > clamscan.txt; then
+            echo "- ClamAV: nothing found" >> report.md
+          else
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            { echo; echo "**ClamAV flagged files:**"; echo '```'; cat clamscan.txt; echo '```'; } >> report.md
+          fi
+
+      - name: Keep the full diffs
+        if: hashFiles('work/*.diff') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: diffs
+          path: work/*.diff
+
+      - name: Comment and label
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file report.md --edit-last 2>/dev/null || gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file report.md
+          if [ "${{ steps.check.outcome }}" = "success" ] && [ "${{ steps.scan.outputs.found }}" != "true" ]; then label="${{ steps.check.outputs.label }}"; else label="needs-review"; fi
+          gh label create needs-review --repo "$GITHUB_REPOSITORY" --color d93f0b --description "A person reviews this" 2>/dev/null || true
+          gh label create auto-merge-ok --repo "$GITHUB_REPOSITORY" --color 0e8a16 --description "An update that asks for nothing new" 2>/dev/null || true
+          other=$([ "$label" = "needs-review" ] && echo auto-merge-ok || echo needs-review)
+          gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-label "$label" --remove-label "$other" || true
+
+      - name: Merge automatically when the update asks for nothing new
+        if: steps.check.outcome == 'success' && steps.check.outputs.label == 'auto-merge-ok' && steps.scan.outputs.found != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr merge "${{ github.event.pull_request.number }}" --repo "$GITHUB_REPOSITORY" --auto --squash || echo "Auto-merge is off for this repo, so a maintainer merges it."
+
+      - name: Fail when something is wrong
+        if: steps.check.outcome != 'success' || steps.scan.outputs.found == 'true'
+        run: exit 1

@@ -1,8 +1,9 @@
 # Submitting an extension
 
-1. Build it (see [docs/EXTENSIONS.md](https://github.com/anycut-app/anycut/blob/main/docs/EXTENSIONS.md)) in your own public repo, with a README.
-2. Publish a GitHub release whose asset is a `.zip` of the extension folder (`package.json` at the zip's root).
-3. Fork this repo and add an entry to `index.json`:
+1. Build it in your own public repo, with a README. The [extension template](https://github.com/anycut-app/extension-template) is a good start, and [docs/EXTENSIONS.md](https://github.com/anycut-app/anycut/blob/main/docs/EXTENSIONS.md) explains everything an extension can do.
+2. Add what its page shows: an `icon`, a `gallery` of screenshots or GIFs, a `galleryBanner` colour, and a `CHANGELOG.md`.
+3. Publish a GitHub release whose asset is a `.zip` of the extension folder (`package.json` at the zip's root). The template's release workflow does this when you push a `v*` tag, and prints the SHA-256.
+4. Fork this repo and add an entry to `index.json`:
 
 ```json
 {
@@ -10,18 +11,24 @@
   "repo": "yourname/anycut-your-extension",
   "version": "1.0.0",
   "kind": "tool",
-  "download": "https://github.com/yourname/anycut-your-extension/releases/download/v1.0.0/your-extension.zip",
-  "sha256": "<sha256 of the zip>",
-  "runsCode": false,
-  "permissions": ["timeline.read"]
+  "download": "https://github.com/yourname/anycut-your-extension/releases/download/v1.0.0/your-extension-1.0.0.zip",
+  "sha256": "<sha256 of the zip>"
 }
 ```
 
-4. Open a pull request using the template.
+   - `kind` is `pack` for content only (effects, fonts, looks, caption styles, skills, and no code), otherwise `tool`.
+   - Leave out `permissions`, `runsCode`, `assets`, `size`, `published` and `versions`: they are read from your zip when it's published.
+   - The `download` must be a release asset of `repo`.
+
+5. Open a pull request using the template. The checks comment on it within a few minutes.
+
+## Updates
+
+Change your entry's `version`, `download` and `sha256` to the new release in a pull request. If the new version asks for no new permissions and adds no code, it merges by itself once the checks pass. Otherwise a person reviews it, and people who have it installed are asked to approve the new permissions.
 
 ## What reviewers check
 
 - It does what it says, and asks only for the permissions it needs.
 - Extensions with Node code (`main`): the code is readable, not minified or obfuscated, and runs no downloads it doesn't explain.
 - No tracking or data collection the README doesn't disclose.
-- Content packs: you have the right to share the fonts, effects or looks in them.
+- Content packs: you have the right to share the fonts, effects, looks and images in them.

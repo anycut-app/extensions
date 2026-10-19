@@ -1,0 +1,44 @@
+name: Publish
+
+# After a merge: mirror each new version's zip into this repo's releases (so what was reviewed can't
+# change or disappear), publish its store-page files under assets/, and update index.json. It also runs
+# every hour, because merges made by the Check workflow's auto-merge don't start other workflows.
+
+on:
+  push:
+    branches: [main]
+    paths: ['index.json']
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Mirror new versions and publish their store pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/publish.mjs
+
+      - name: Commit
+        run: |
+          git config user.name "AnyCut"
+          git config user.email "dev@anycut.app"
+          git add -A
+          if git diff --cached --quiet; then echo "Nothing new."; else git commit -m "Publish new catalog versions" && git push; fi

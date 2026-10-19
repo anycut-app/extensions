@@ -1,0 +1,16 @@
+{
+  "name": "anycut-extension-catalog",
+  "private": true,
+  "type": "module",
+  "description": "Checks and publishing for the AnyCut extension catalog",
+  "scripts": {
+    "check": "node scripts/check-pr.mjs --base origin/main",
+    "publish:local": "node scripts/publish.mjs --local local-catalog"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "fflate": "0.8.2"
+  },
+  "engines": { "node": ">=22" }
+}
