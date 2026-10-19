@@ -69,5 +69,7 @@ if (pr) {
     console.log(url)
   } finally {
     git('checkout', start)
+    // the pull request has the branch now; merging deletes it on GitHub
+    git('branch', '-D', branch)
   }
 }
