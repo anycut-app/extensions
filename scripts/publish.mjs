@@ -10,12 +10,11 @@
 //       development: writes a self-contained catalog to <dir> (zips/, assets/, index.json) for AnyCut's
 //       ANYCUT_CATALOG=<dir>/index.json; --add zips an extension folder and lists it
 import { execFileSync } from 'node:child_process'
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join, relative, resolve } from 'node:path'
-import { zipSync } from 'fflate'
-import { describe, inspectEntry, readJson, ROOT, sha256 } from './lib.mjs'
+import { dirname, join, resolve } from 'node:path'
+import { describe, inspectEntry, readJson, ROOT, sha256, zipFolder } from './lib.mjs'
 
 const argv = process.argv.slice(2)
 const opt = (name) => {
@@ -36,21 +35,6 @@ const history = existsSync(historyPath) ? readJson(historyPath) : existsSync(joi
 
 const mirrorPrefix = local ? 'zips/' : `https://github.com/${repo}/releases/download/`
 const isPublished = (e) => !!e.assets && e.download.startsWith(mirrorPrefix)
-
-/** Zip an extension folder (package.json at the root), for --add. */
-function zipFolder(dir) {
-  const files = {}
-  const walk = (d) => {
-    for (const name of readdirSync(d)) {
-      if (name === '.git' || name === 'node_modules' || name.endsWith('.zip')) continue
-      const p = join(d, name)
-      if (statSync(p).isDirectory()) walk(p)
-      else files[relative(dir, p).replace(/\\/g, '/')] = new Uint8Array(readFileSync(p))
-    }
-  }
-  walk(dir)
-  return zipSync(files, { level: 9 })
-}
 
 async function mirror(entry, zip) {
   const file = `${entry.id}-${entry.version}.zip`

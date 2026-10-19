@@ -1,13 +1,13 @@
 // Shared by the catalog's checks (check-pr.mjs) and publishing (publish.mjs). Plain Node 22 + fflate.
 // Zips are only downloaded, hashed, unpacked into a work folder and read: nothing in them is ever run.
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import Ajv2020 from 'ajv/dist/2020.js'
 import addFormats from 'ajv-formats'
-import { unzipSync } from 'fflate'
+import { unzipSync, zipSync } from 'fflate'
 
 export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const ID_RE = /^[a-z0-9][a-z0-9-]{0,39}\.[a-z0-9][a-z0-9-]{0,39}$/
@@ -140,6 +140,21 @@ export async function inspectEntry(entry, { work, base } = {}) {
     await unpack(files, dir)
   }
   return { zip, files, manifest, facts, problems, dir }
+}
+
+/** Zip an extension folder (package.json at the root), skipping .git, node_modules and zips. */
+export function zipFolder(dir) {
+  const files = {}
+  const walk = (d) => {
+    for (const name of readdirSync(d)) {
+      if (name === '.git' || name === 'node_modules' || name.endsWith('.zip')) continue
+      const p = join(d, name)
+      if (statSync(p).isDirectory()) walk(p)
+      else files[relative(dir, p).replace(/\\/g, '/')] = new Uint8Array(readFileSync(p))
+    }
+  }
+  walk(dir)
+  return zipSync(files, { level: 9 })
 }
 
 export const exists = (p) => existsSync(p)

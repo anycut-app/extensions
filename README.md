@@ -20,6 +20,14 @@ The list of community extensions available inside [AnyCut](https://github.com/an
 - AnyCut downloads the mirrored zip and **refuses it if its SHA-256 differs** from the entry, or if what's inside isn't what the catalog says (another id or version, more permissions, code it didn't declare).
 - If something harmful slips through, its id goes on the **`blocklist`** (optionally only some versions, e.g. `"versions": "<1.2.0"`), and AnyCut turns it off everywhere on its next check.
 
+## AnyCut's own extensions
+
+The ones AnyCut makes (publisher `anycut`, shown as made by AnyCut) go through this catalog like everyone else's, and AnyCut ships none built in. Their zips are released here, from AnyCut's repo, with `node scripts/release-official.mjs <extension folder> --pr`, which opens the pull request that adds the entry.
+
+## yt-dlp mirror
+
+AnyCut's Video Downloader runs [yt-dlp](https://github.com/yt-dlp/yt-dlp). So that it never downloads anything from a third party at runtime, [`yt-dlp.yml`](.github/workflows/yt-dlp.yml) copies yt-dlp's newest release here once a day: the Windows, macOS and Linux builds, unmodified and checked against yt-dlp's own SHA-256 sums, as the release `yt-dlp-<version>`. [`mirrors/yt-dlp.json`](mirrors/yt-dlp.json) names the version and each file's URL and SHA-256; the extension installs and updates from there, checking the SHA-256 again. yt-dlp is released under the Unlicense.
+
 To build an extension, start from the [extension template](https://github.com/anycut-app/extension-template) and read [docs/EXTENSIONS.md](https://github.com/anycut-app/anycut/blob/main/docs/EXTENSIONS.md).
 
 ## Trying a catalog locally

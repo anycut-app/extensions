@@ -1,0 +1,41 @@
+name: Mirror yt-dlp
+
+# AnyCut's Video Downloader installs and updates yt-dlp from this repo, never from a third party at
+# runtime. Once a day, copy yt-dlp's newest release here (checked against its own SHA-256 sums) and
+# point mirrors/yt-dlp.json at it.
+
+on:
+  schedule:
+    - cron: '41 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yt-dlp
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm ci
+
+      - name: Mirror the latest yt-dlp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/mirror-yt-dlp.mjs
+
+      - name: Commit
+        run: |
+          git config user.name "AnyCut"
+          git config user.email "dev@anycut.app"
+          git add mirrors/yt-dlp.json
+          if git diff --cached --quiet; then echo "Nothing new."; else git commit -m "Mirror yt-dlp $(node -p "require('./mirrors/yt-dlp.json').version")" && git push; fi
