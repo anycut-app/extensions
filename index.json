@@ -3,6 +3,14 @@
   "version": 1,
   "extensions": [
     {
+      "id": "anycut.thumbnail-maker",
+      "repo": "anycut-app/extensions",
+      "version": "0.3.0",
+      "kind": "tool",
+      "download": "https://github.com/anycut-app/extensions/releases/download/anycut.thumbnail-maker-v0.3.0/anycut.thumbnail-maker-0.3.0.zip",
+      "sha256": "d38c2a48622b9e0451268d6e9bf9e85a77f78594fc0507365f5abadb111f37fc"
+    },
+    {
       "id": "anycut.video-downloader",
       "repo": "anycut-app/extensions",
       "version": "0.3.0",
