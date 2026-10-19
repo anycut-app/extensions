@@ -1,0 +1,36 @@
+{
+  "name": "thumbnail-maker",
+  "publisher": "anycut",
+  "displayName": "Thumbnail Maker",
+  "description": "Make YouTube thumbnails from a frame of your edit: one-click styles, thumbnail fonts, highlighted words, an arrow and a circle, and a preview at YouTube's sizes. Saves a 1280×720 PNG or JPG.",
+  "version": "0.4.0",
+  "license": "MIT",
+  "repository": "https://github.com/anycut-app/extensions",
+  "bugs": "https://github.com/anycut-app/extensions/issues",
+  "engines": { "anycut": "^0.2.0" },
+  "icon": "media/icon.svg",
+  "cover": "media/cover.png",
+  "galleryBanner": { "color": "#22252e", "theme": "dark" },
+  "gallery": [
+    { "path": "media/styles.gif", "caption": "Eight one-click styles, each previewed on your own frame" },
+    { "path": "media/screenshot-tab.png", "caption": "Drag the title on the canvas; see it at YouTube's sizes below" },
+    { "path": "media/examples.png", "caption": "Thumbnails made with it: outlines, boxes, glow, highlighted words, an arrow" }
+  ],
+  "categories": ["Graphics"],
+  "keywords": ["thumbnail", "youtube", "image", "title", "design"],
+  "permissions": ["timeline.read", "workspace.write", "media.import", "downloads"],
+  "contributes": {
+    "editors": [
+      {
+        "id": "thumbnail",
+        "title": "Thumbnail",
+        "icon": "media/glyph.svg",
+        "webview": "ui/index.html",
+        "timeline": "optional",
+        "multiple": true,
+        "properties": { "webview": "ui/properties.html", "title": "Thumbnail" },
+        "panels": ["core:timeline"]
+      }
+    ]
+  }
+}

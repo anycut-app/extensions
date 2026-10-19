@@ -9,6 +9,12 @@
   ],
   "anycut.thumbnail-maker": [
     {
+      "version": "0.4.0",
+      "published": "2026-10-19T02:51:45.246Z",
+      "download": "https://github.com/anycut-app/extensions/releases/download/anycut.thumbnail-maker-v0.4.0/anycut.thumbnail-maker-0.4.0.zip",
+      "sha256": "aa97e31aa4677c27a3d71409d3430db99be75506fc4519f031b631cb5b4dceda"
+    },
+    {
       "version": "0.3.0",
       "published": "2026-10-19T02:25:09.802Z",
       "download": "https://github.com/anycut-app/extensions/releases/download/anycut.thumbnail-maker-v0.3.0/anycut.thumbnail-maker-0.3.0.zip",

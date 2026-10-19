@@ -8,7 +8,23 @@
       "version": "0.4.0",
       "kind": "tool",
       "download": "https://github.com/anycut-app/extensions/releases/download/anycut.thumbnail-maker-v0.4.0/anycut.thumbnail-maker-0.4.0.zip",
-      "sha256": "aa97e31aa4677c27a3d71409d3430db99be75506fc4519f031b631cb5b4dceda"
+      "sha256": "aa97e31aa4677c27a3d71409d3430db99be75506fc4519f031b631cb5b4dceda",
+      "assets": "https://raw.githubusercontent.com/anycut-app/extensions/main/assets/anycut.thumbnail-maker/0.4.0",
+      "size": 3111139,
+      "published": "2026-10-19T02:51:45.246Z",
+      "runsCode": false,
+      "permissions": [
+        "downloads",
+        "media.import",
+        "timeline.read",
+        "workspace.write"
+      ],
+      "versions": [
+        {
+          "version": "0.3.0",
+          "published": "2026-10-19T02:25:09.802Z"
+        }
+      ]
     },
     {
       "id": "anycut.video-downloader",
