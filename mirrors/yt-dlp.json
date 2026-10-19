@@ -1,0 +1,25 @@
+{
+  "version": "2026.08.19",
+  "upstream": "https://github.com/yt-dlp/yt-dlp/releases/tag/2026.08.19",
+  "mirrored": "2026-10-19T02:20:56.858Z",
+  "files": {
+    "win32-x64": {
+      "name": "yt-dlp.exe",
+      "url": "https://github.com/anycut-app/extensions/releases/download/yt-dlp-2026.08.19/yt-dlp.exe",
+      "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+      "size": 17840399
+    },
+    "darwin": {
+      "name": "yt-dlp_macos",
+      "url": "https://github.com/anycut-app/extensions/releases/download/yt-dlp-2026.08.19/yt-dlp_macos",
+      "sha256": "0f192b7ec147ab6288885d6351d9ab67367640029b4377576ef46dd79cf7b202",
+      "size": 37146048
+    },
+    "linux-x64": {
+      "name": "yt-dlp_linux",
+      "url": "https://github.com/anycut-app/extensions/releases/download/yt-dlp-2026.08.19/yt-dlp_linux",
+      "sha256": "58162f9bfdc27458ea47bfcb311cf47028f17d8154a8bf7d689861d46399230a",
+      "size": 40446224
+    }
+  }
+}
