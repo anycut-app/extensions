@@ -13,8 +13,9 @@ export const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 export const ID_RE = /^[a-z0-9][a-z0-9-]{0,39}\.[a-z0-9][a-z0-9-]{0,39}$/
 export const MAX_ZIP = 200 * 1024 * 1024
 export const LIMITS = { files: 5000, bytes: 300 * 1024 * 1024 }
-/** What a content pack may contain; anything with code, tabs, views or tools is a tool. */
+/** What a content pack may contain; anything with code, tabs, a sidebar page or tools is a tool. */
 export const PACK_KINDS = ['effects', 'fonts', 'looks', 'captionStyles', 'skills']
+export const MAX_IMAGE = 5 * 1024 * 1024
 
 export const sha256 = (data) => createHash('sha256').update(data).digest('hex')
 
@@ -87,6 +88,8 @@ export function manifestProblems(m) {
   if (m && typeof m === 'object') {
     if (!ID_RE.test(`${m.publisher}.${m.name}`)) out.push('publisher and name must be lowercase letters, digits and dashes')
     if (m.contributes?.tools?.length && !m.main) out.push('tools need "main"')
+    // the catalog shows every extension as a card with its cover
+    if (!m.cover) out.push('a "cover" is required: a 16:9 PNG, JPG, WebP or GIF in the extension (1280×720 is ideal)')
   }
   return out
 }
@@ -94,7 +97,7 @@ export function manifestProblems(m) {
 /** What the zip actually is: its id, version, whether it runs code, its permissions, and tool or pack. */
 export function describe(m) {
   const c = m.contributes ?? {}
-  const ui = ['editors', 'views', 'panels', 'inspector', 'menus', 'tools', 'commands'].some((k) => c[k]?.length)
+  const ui = !!c.sidebar || ['editors', 'panels', 'inspector', 'menus', 'tools', 'commands'].some((k) => c[k]?.length)
   const packs = PACK_KINDS.filter((k) => c[k])
   return {
     id: `${m.publisher}.${m.name}`,
@@ -124,6 +127,13 @@ export async function inspectEntry(entry, { work, base } = {}) {
   if (facts.kind !== entry.kind) problems.push(`the zip is a ${facts.kind}, but the entry says ${entry.kind}`)
   if (entry.runsCode !== undefined && entry.runsCode !== facts.runsCode) problems.push(`runsCode should be ${facts.runsCode}`)
   if (entry.permissions !== undefined && JSON.stringify([...entry.permissions].sort()) !== JSON.stringify(facts.permissions)) problems.push(`permissions should be ${JSON.stringify(facts.permissions)}`)
+  // only AnyCut publishes as "anycut" (the app marks those as made by AnyCut)
+  if (entry.id.startsWith('anycut.') && !/^anycut-app\//i.test(entry.repo)) problems.push('the "anycut" publisher is reserved for extensions AnyCut makes (repos in anycut-app)')
+  if (typeof manifest.cover === 'string') {
+    const cover = files.get(manifest.cover.replace(/^\.?\//, ''))
+    if (!cover) problems.push(`the cover ${manifest.cover} is not in the zip`)
+    else if (cover.length > MAX_IMAGE) problems.push(`the cover is larger than ${MAX_IMAGE / 1048576} MB`)
+  }
   let dir
   if (work) {
     dir = join(work, entry.id, entry.version)

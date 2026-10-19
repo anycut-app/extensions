@@ -1,7 +1,7 @@
 // Publishes reviewed entries, for the "Publish" workflow (on merge, hourly, or by hand):
 //   - downloads each new entry's zip and checks its SHA-256 again
 //   - mirrors the zip into this repo's releases, so what was reviewed can't change or disappear
-//   - publishes its store-page files (package.json, README, CHANGELOG, icon, gallery) under assets/<id>/<version>/
+//   - publishes its store-page files (package.json, README, CHANGELOG, icon, cover, gallery) under assets/<id>/<version>/
 //   - rewrites the entry: the mirror as `download`, `assets`, `size`, `published`, the permissions and
 //     runsCode read from the zip, and earlier `versions` (kept in history.json)
 //
@@ -83,6 +83,7 @@ async function publishAssets(entry, files, manifest) {
     ['CHANGELOG.md', 1024 * 1024],
   ])
   if (typeof manifest.icon === 'string' && /\.(svg|png|jpe?g|webp)$/i.test(manifest.icon)) wanted.set(manifest.icon.replace(/^\.?\//, ''), 1024 * 1024)
+  if (typeof manifest.cover === 'string') wanted.set(manifest.cover.replace(/^\.?\//, ''), MAX_IMAGE)
   for (const g of manifest.gallery ?? []) wanted.set(String(g.path).replace(/^\.?\//, ''), MAX_IMAGE)
   for (const [path, max] of wanted) {
     const data = files.get(path)
@@ -100,7 +101,9 @@ for (const folder of adds) {
   const facts = describe(manifest)
   const tmp = join(await mkdtemp(join(tmpdir(), 'catalog-add-')), `${facts.id}-${facts.version}.zip`)
   await writeFile(tmp, zip)
-  const entry = { id: facts.id, repo: `local/${manifest.name}`, version: facts.version, kind: facts.kind, download: tmp, sha256: sha256(zip) }
+  // its GitHub repo when package.json names one (as its real entry would), else a placeholder
+  const gh = String(manifest.repository?.url ?? manifest.repository ?? '').match(/github\.com\/([\w.-]+\/[\w.-]+?)(?:\.git)?(?:\/|$)/)
+  const entry = { id: facts.id, repo: gh?.[1] ?? `local/${manifest.name}`, version: facts.version, kind: facts.kind, download: tmp, sha256: sha256(zip) }
   index.extensions = [...index.extensions.filter((e) => e.id !== entry.id), entry]
 }
 
