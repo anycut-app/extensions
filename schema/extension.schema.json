@@ -278,6 +278,9 @@
               "minLength": 1,
               "maxLength": 60
             },
+            "icon": {
+              "$ref": "#/$defs/__schema6"
+            },
             "webview": {
               "$ref": "#/$defs/__schema9"
             }
