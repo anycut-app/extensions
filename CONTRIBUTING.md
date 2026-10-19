@@ -2,7 +2,7 @@
 
 1. Build it in your own public repo, with a README. The [extension template](https://github.com/anycut-app/extension-template) is a good start, and [docs/EXTENSIONS.md](https://github.com/anycut-app/anycut/blob/main/docs/EXTENSIONS.md) explains everything an extension can do.
 2. Add what its page shows: an `icon`, a `gallery` of screenshots or GIFs, a `galleryBanner` colour, and a `CHANGELOG.md`.
-3. Publish a GitHub release whose asset is a `.zip` of the extension folder (`package.json` at the zip's root). The template's release workflow does this when you push a `v*` tag, and prints the SHA-256.
+3. Publish a GitHub release whose asset is a `.zip` of the extension folder (`package.json` at the zip's root). The template's release workflow does this when you push a `v*` tag, and puts the entry for step 4 (with the SHA-256) in the release notes.
 4. Fork this repo and add an entry to `index.json`:
 
 ```json
