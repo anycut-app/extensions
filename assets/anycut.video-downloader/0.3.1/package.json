@@ -1,0 +1,88 @@
+{
+  "name": "video-downloader",
+  "publisher": "anycut",
+  "displayName": "Video Downloader",
+  "description": "Download videos and audio from YouTube and 1,000+ other sites with yt-dlp into a library you can use in any project.",
+  "version": "0.3.1",
+  "license": "MIT",
+  "repository": "https://github.com/anycut-app/extensions",
+  "bugs": "https://github.com/anycut-app/extensions/issues",
+  "engines": { "anycut": "^0.2.0" },
+  "icon": "media/icon.svg",
+  "cover": "media/cover.png",
+  "galleryBanner": { "color": "#1b1b1e", "theme": "dark" },
+  "gallery": [
+    { "path": "media/screenshot-library.png", "caption": "Your downloads in the sidebar, ready for any project; the downloader tab beside it" },
+    { "path": "media/download.gif", "caption": "Paste a link, pick a format by its size, and it downloads straight into your project" },
+    { "path": "media/screenshot-tab.png", "caption": "Every format with its size on the right; Downloads and yt-dlp's log below" },
+    { "path": "media/screenshot-source.png", "caption": "Downloaded media remembers where it came from: the Source section in the Inspector" }
+  ],
+  "main": "extension.mjs",
+  "categories": ["Media"],
+  "keywords": ["youtube", "yt-dlp", "download", "import"],
+  "permissions": ["downloads", "media.import", "project.edit", "network", "process"],
+  "contributes": {
+    "sidebar": { "webview": "ui/library.html", "icon": "media/glyph.svg" },
+    "editors": [
+      {
+        "id": "downloader",
+        "title": "Video Downloader",
+        "icon": "media/glyph.svg",
+        "webview": "ui/index.html",
+        "timeline": "none",
+        "properties": { "webview": "ui/properties.html", "title": "Download" },
+        "panels": [
+          { "id": "downloads", "title": "Downloads", "webview": "ui/downloads.html" },
+          { "id": "log", "title": "Log", "webview": "ui/log.html" }
+        ]
+      }
+    ],
+    "inspector": [
+      { "id": "source", "title": "Source", "webview": "ui/source.html", "when": { "mediaKind": ["video", "audio"], "metadata": true } }
+    ],
+    "menus": [
+      {
+        "id": "redownload",
+        "title": "Download again in higher quality…",
+        "where": "media",
+        "when": { "mediaKind": ["video", "audio"], "metadata": true },
+        "modal": { "webview": "ui/redownload.html", "width": 440, "height": 300 }
+      }
+    ],
+    "commands": [{ "id": "updateYtDlp", "title": "Update yt-dlp" }],
+    "tools": [
+      {
+        "name": "get_info",
+        "readOnly": true,
+        "description": "Look up a video URL (YouTube, Vimeo, X, TikTok, Instagram and 1,000+ sites supported by yt-dlp) without downloading: title, channel, duration, upload date, available resolutions and a description excerpt. Use it to check you have the right video before downloading.",
+        "inputSchema": {
+          "type": "object",
+          "properties": { "url": { "type": "string", "description": "The video page URL (http or https)." } },
+          "required": ["url"]
+        }
+      },
+      {
+        "name": "download",
+        "description": "Download a video (or just its audio) from a URL into the user's video library (Downloads/AnyCut/Video Downloader) and, when a project is open, copy it into the project and add it to the media. Optionally only a section (start/end in seconds) — use that for reference clips. Returns the file path and media id. Only download what the user asked for; mind copyright and the site's terms.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string", "description": "The video page URL (http or https)." },
+            "quality": { "type": "string", "enum": ["best", "2160", "1440", "1080", "720", "480", "audio"], "description": "Maximum height, or 'audio' for an audio-only MP3. Default 1080." },
+            "start": { "type": "number", "minimum": 0, "description": "Only download from this second (needs end)." },
+            "end": { "type": "number", "minimum": 0, "description": "Only download up to this second." },
+            "addToProject": { "type": "boolean", "description": "Also copy it into the open project and add it to the media (default true)." }
+          },
+          "required": ["url"]
+        }
+      }
+    ],
+    "configuration": {
+      "properties": {
+        "defaultQuality": { "type": "string", "title": "Default quality", "enum": ["best", "2160", "1440", "1080", "720", "480", "audio"], "enumLabels": ["Best available", "4K (2160p)", "1440p", "1080p", "720p", "480p", "Audio only (MP3)"], "default": "1080" },
+        "subfolder": { "type": "string", "title": "Project folder", "description": "Where downloads are copied when added to a project: a folder inside its import folder (empty = the import folder itself). Every download also stays in Downloads/AnyCut/Video Downloader.", "default": "downloads" },
+        "ytdlpPath": { "type": "string", "title": "yt-dlp path", "description": "Use this yt-dlp executable instead of the one on PATH or the one installed here.", "default": "" }
+      }
+    }
+  }
+}

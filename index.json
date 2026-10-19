@@ -32,7 +32,24 @@
       "version": "0.3.1",
       "kind": "tool",
       "download": "https://github.com/anycut-app/extensions/releases/download/anycut.video-downloader-v0.3.1/anycut.video-downloader-0.3.1.zip",
-      "sha256": "c25ced7f894f010d5c9dcad8aab2548379f2c87fffd0b1b6376ff265b1ff1d4c"
+      "sha256": "c25ced7f894f010d5c9dcad8aab2548379f2c87fffd0b1b6376ff265b1ff1d4c",
+      "assets": "https://raw.githubusercontent.com/anycut-app/extensions/main/assets/anycut.video-downloader/0.3.1",
+      "size": 1663486,
+      "published": "2026-10-19T02:53:29.819Z",
+      "runsCode": true,
+      "permissions": [
+        "downloads",
+        "media.import",
+        "network",
+        "process",
+        "project.edit"
+      ],
+      "versions": [
+        {
+          "version": "0.3.0",
+          "published": "2026-10-19T02:23:30.815Z"
+        }
+      ]
     }
   ],
   "blocklist": []
