@@ -1,6 +1,12 @@
 {
   "anycut.video-downloader": [
     {
+      "version": "0.3.2",
+      "published": "2026-10-20T06:04:30.449Z",
+      "download": "https://github.com/anycut-app/extensions/releases/download/anycut.video-downloader-v0.3.2/anycut.video-downloader-0.3.2.zip",
+      "sha256": "8497748a8fcd064eb1e5ad7dd6d43ce06c5b4b82dcb2275f9ba3caba9fd44166"
+    },
+    {
       "version": "0.3.1",
       "published": "2026-10-19T02:53:29.819Z",
       "download": "https://github.com/anycut-app/extensions/releases/download/anycut.video-downloader-v0.3.1/anycut.video-downloader-0.3.1.zip",
