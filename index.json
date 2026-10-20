@@ -29,27 +29,10 @@
     {
       "id": "anycut.video-downloader",
       "repo": "anycut-app/extensions",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "kind": "tool",
-      "download": "https://github.com/anycut-app/extensions/releases/download/anycut.video-downloader-v0.3.1/anycut.video-downloader-0.3.1.zip",
-      "sha256": "c25ced7f894f010d5c9dcad8aab2548379f2c87fffd0b1b6376ff265b1ff1d4c",
-      "assets": "https://raw.githubusercontent.com/anycut-app/extensions/main/assets/anycut.video-downloader/0.3.1",
-      "size": 1663486,
-      "published": "2026-10-19T02:53:29.819Z",
-      "runsCode": true,
-      "permissions": [
-        "downloads",
-        "media.import",
-        "network",
-        "process",
-        "project.edit"
-      ],
-      "versions": [
-        {
-          "version": "0.3.0",
-          "published": "2026-10-19T02:23:30.815Z"
-        }
-      ]
+      "download": "https://github.com/anycut-app/extensions/releases/download/anycut.video-downloader-v0.3.2/anycut.video-downloader-0.3.2.zip",
+      "sha256": "8497748a8fcd064eb1e5ad7dd6d43ce06c5b4b82dcb2275f9ba3caba9fd44166"
     }
   ],
   "blocklist": []
